@@ -36,6 +36,7 @@ public class CrimeFragment extends Fragment {
         UUID idForCrime = (UUID) getArguments().getSerializable(ARG_CRIME_ID);// CrimeActivity负责创建fragment(使用CrimeFragment.newInstance()来创建)，
                                                                                 // CrimeFragment参数配置和获取，全在Fragment中。
         mCrime = CrimeLab.get(getActivity()).getCrime(idForCrime);
+
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

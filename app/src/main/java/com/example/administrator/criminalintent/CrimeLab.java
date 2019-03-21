@@ -41,6 +41,7 @@ public class CrimeLab {
         values.put(CrimeDbSchema.CrimeTable.Cols.DATE,crime.getDate().getTime());// getTime 返回long类型
         values.put(CrimeDbSchema.CrimeTable.Cols.TITLE,crime.getTitle());// title 为 String 类型
         values.put(CrimeDbSchema.CrimeTable.Cols.SOLVED,crime.isSolved()? 1:0);//solved 值为 int 类型处理
+        values.put(CrimeDbSchema.CrimeTable.Cols.SUSPECT,crime.getSuspect());
 
         return  values;
     }

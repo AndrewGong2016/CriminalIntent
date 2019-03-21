@@ -165,6 +165,7 @@ public class CrimeListFragment extends Fragment {
             /**
              * parameter CrimeHolder crimeHolder: Holder对象
              * parameter int     i：Holder的位置；
+             *
              */
             Crime crime = mCrimes.get(i);
             if(crime != null){
