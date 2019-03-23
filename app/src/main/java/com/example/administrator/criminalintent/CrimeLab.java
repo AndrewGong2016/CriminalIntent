@@ -50,7 +50,6 @@ public class CrimeLab {
         List<Crime> crimes = new ArrayList<>();
         //查询所有的Crimes；
         CrimeCursorWrapper cursor = queryCrimes(null, null);
-
         try {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
@@ -65,12 +64,10 @@ public class CrimeLab {
 
 
     public Crime getCrime(UUID uuid){
-
         CrimeCursorWrapper cursor = queryCrimes(
                 CrimeDbSchema.CrimeTable.Cols.UUID + " = ?",
                 new String[] { uuid.toString() }
         );
-
         try {
             if (cursor.getCount() == 0) {
                 return null;
@@ -80,8 +77,6 @@ public class CrimeLab {
         } finally {
             cursor.close();
         }
-
-
     }
 
 
@@ -112,7 +107,7 @@ public class CrimeLab {
                 null // orderBy
         );
 
-        // 2 封装查询结果：
+        // 2 使用 CrimeCursorWrapper对象 来 封装查询结果：
         return  new CrimeCursorWrapper(cursor);
     }
 
