@@ -56,4 +56,10 @@ public class Crime {
     public void setSolved(boolean solved) {
         mSolved = solved;
     }
+
+
+    //使用id作为Photo的文件名，唯一&固定，不可修改。
+    public String getPhotofileName(){
+        return "IMG_"+getId().toString()+".jpg";
+    }
 }

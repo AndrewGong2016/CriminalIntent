@@ -9,10 +9,17 @@ import com.example.administrator.criminalintent.database.CrimeBaseHelper;
 import com.example.administrator.criminalintent.database.CrimeCursorWrapper;
 import com.example.administrator.criminalintent.database.CrimeDbSchema;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * CrimeLab 类对所有的Crime对象进行管理：
+ * 1 Crime 基本信息的更新；
+ * 2 查询指定要求的Crime；
+ * 3 Crime 图片路径提供；
+ */
 public class CrimeLab {
 
     private static CrimeLab sCrimeLab;
@@ -79,6 +86,10 @@ public class CrimeLab {
         }
     }
 
+    public File getPhotoFile(Crime crime){
+        File fileDir = mAppContext.getFilesDir();
+        return new File(fileDir,crime.getPhotofileName());
+    }
 
     public void updateCrime( Crime crime){
         String uuidString = crime.getId().toString();
@@ -110,6 +121,8 @@ public class CrimeLab {
         // 2 使用 CrimeCursorWrapper对象 来 封装查询结果：
         return  new CrimeCursorWrapper(cursor);
     }
+
+
 
 
 

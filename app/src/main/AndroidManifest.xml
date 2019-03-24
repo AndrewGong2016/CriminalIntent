@@ -9,6 +9,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <!--直接使用Google提供的provider类（深入学习之后，也可以自定义ContentProvider）-->
+        <provider
+            android:authorities="com.example.administrator.criminalintent.fileprovider"
+            android:name="android.support.v4.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/files"/>
+        </provider>
+        
+
         <activity android:name="com.example.administrator.criminalintent.CrimeListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

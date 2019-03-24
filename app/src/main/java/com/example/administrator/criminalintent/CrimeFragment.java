@@ -1,12 +1,17 @@
 package com.example.administrator.criminalintent;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
@@ -19,13 +24,18 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
+import java.io.File;
+import java.util.List;
 import java.util.UUID;
 
 public class CrimeFragment extends Fragment {
 
     private static final String ARG_CRIME_ID = "crime_id";
     private static final int REQUEST_CONTACT = 1;
+    private static final int REQUEST_PHOTO = 2;
 
     private Crime mCrime;
     private EditText mTitleField;
@@ -34,6 +44,9 @@ public class CrimeFragment extends Fragment {
     private Button mReportButton;
     private Button mSuspectButton;
 
+    private ImageButton mPhotoButton;
+    private ImageView mPhotoView;
+   private File mPhotoFile;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,12 +60,16 @@ public class CrimeFragment extends Fragment {
         UUID idForCrime = (UUID) getArguments().getSerializable(ARG_CRIME_ID);// CrimeActivity负责创建fragment(使用CrimeFragment.newInstance()来创建)，
                                                                                 // CrimeFragment参数配置和获取，全在Fragment中。
         mCrime = CrimeLab.get(getActivity()).getCrime(idForCrime);
+        mPhotoFile = CrimeLab.get(getActivity()).getPhotoFile(mCrime);
 
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_crime, container, false);
+        final Intent pickintent = new Intent( Intent.ACTION_PICK,ContactsContract.Contacts.CONTENT_URI);
+        pickintent.addCategory(Intent.CATEGORY_HOME);
+
 
         mReportButton = v.findViewById(R.id.crime_report);
         mReportButton.setOnClickListener(new View.OnClickListener() {
@@ -71,12 +88,16 @@ public class CrimeFragment extends Fragment {
         mSuspectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent pickintent = new Intent( Intent.ACTION_PICK,ContactsContract.Contacts.CONTENT_URI);
                 startActivityForResult(pickintent, REQUEST_CONTACT);
             }
         });
         if (mCrime.getSuspect() != null) {
             mSuspectButton.setText(mCrime.getSuspect());
+        }
+        PackageManager packageManager = getActivity().getPackageManager();
+        if (packageManager.resolveActivity(pickintent,
+                PackageManager.MATCH_DEFAULT_ONLY) == null) {
+            mSuspectButton.setEnabled(false);
         }
 
 
@@ -111,6 +132,35 @@ public class CrimeFragment extends Fragment {
             }
         });
 
+        mPhotoButton = v.findViewById(R.id.crime_camera);
+        mPhotoView = v.findViewById(R.id.crime_photo);
+
+
+        final Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        boolean canTakePhoto = mPhotoFile != null &&
+                captureImage.resolveActivity(packageManager) != null;
+        mPhotoButton.setEnabled(canTakePhoto);
+        mPhotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //1 将本应用内部的File转换为相机应用能够解读的uri形式
+                Uri uri = FileProvider.getUriForFile(getActivity(),
+                        "com.example.administrator.criminalintent.fileprovider", mPhotoFile);
+                //2 将uri 放入Intent中
+                captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                List<ResolveInfo> cameraActivities = getActivity()
+                        .getPackageManager().queryIntentActivities(captureImage,
+                                PackageManager.MATCH_DEFAULT_ONLY);
+                //3 给activity授权
+                for (ResolveInfo activity : cameraActivities) {
+                    getActivity().grantUriPermission(activity.activityInfo.packageName,
+                            uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                }
+                startActivityForResult(captureImage, REQUEST_PHOTO);
+            }
+        });
+        updatePhotoView();
         return v;
     }
 
@@ -150,6 +200,8 @@ public class CrimeFragment extends Fragment {
             } finally {
                 c.close();
             }
+        }else if(requestCode == REQUEST_PHOTO ){
+            updatePhotoView();
         }
     }
 
@@ -179,6 +231,17 @@ public class CrimeFragment extends Fragment {
         String report = getString(R.string.crime_report,
                 mCrime.getTitle(), dateString, solvedString, suspect);
         return report;
+    }
+
+    private void updatePhotoView() {
+        if (mPhotoFile == null || !mPhotoFile.exists()) {
+            mPhotoView.setImageDrawable(null);
+        } else {
+            //根据路径创建bitmap对象填充ImageView
+            Bitmap bitmap = PictureUtils.getScaledBitmap(
+                    mPhotoFile.getPath(), getActivity());
+            mPhotoView.setImageBitmap(bitmap);
+        }
     }
 
     /*
