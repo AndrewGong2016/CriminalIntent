@@ -18,6 +18,11 @@ public class CrimeActivity extends SingleFragmentacActivity {
         return CrimeFragment.newInstance(id);
     }
 
+    @Override
+    protected int getLayoutResId() {
+        return 0;
+    }
+
     public static Intent newIntent(Context packageContext, UUID crimeId) {
         Intent intent = new Intent(packageContext, CrimeActivity.class);
         intent.putExtra(EXTRA_CRIME_ID, crimeId);

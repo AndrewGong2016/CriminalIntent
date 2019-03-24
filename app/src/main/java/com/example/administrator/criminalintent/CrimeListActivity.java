@@ -13,4 +13,9 @@ public class CrimeListActivity extends SingleFragmentacActivity{
         return new CrimeListFragment();//创建实际的Fragment对象，以供显式！！
     }
 
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.activity_twopane;
+    }
+
 }
