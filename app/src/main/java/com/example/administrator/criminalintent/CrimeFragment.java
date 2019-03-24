@@ -68,8 +68,6 @@ public class CrimeFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_crime, container, false);
         final Intent pickintent = new Intent( Intent.ACTION_PICK,ContactsContract.Contacts.CONTENT_URI);
-        pickintent.addCategory(Intent.CATEGORY_HOME);
-
 
         mReportButton = v.findViewById(R.id.crime_report);
         mReportButton.setOnClickListener(new View.OnClickListener() {
