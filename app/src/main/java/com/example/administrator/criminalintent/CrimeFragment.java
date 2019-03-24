@@ -200,7 +200,7 @@ public class CrimeFragment extends Fragment {
             } finally {
                 c.close();
             }
-        }else if(requestCode == REQUEST_PHOTO ){
+        }else if(requestCode == REQUEST_PHOTO ){ //activity返回时，相机应用已经往Provider中写好了数据
             updatePhotoView();
         }
     }
