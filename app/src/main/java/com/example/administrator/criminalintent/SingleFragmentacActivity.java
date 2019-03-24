@@ -11,12 +11,22 @@ public abstract class SingleFragmentacActivity extends AppCompatActivity {
     protected abstract Fragment createFragment();
 
     /**
+     * method name:getLayoutResId
      * 该抽象方法的资源id 作为承载Fragment的视图容器（且其中必须包含有ID== R.idfragment_container 的view container）
      * @return 资源id，用于setContentView(int resId)
      */
     @LayoutRes
     protected abstract int getLayoutResId();
 
+
+    /**
+     * method name: onCreate
+     * SingleFragmentActivity 此方法中
+     * 1 设置Activity的布局资源——抽象为getlayoutResId接口;
+     * 2 使用FragmentManager来加载createFragment方法返回的Fragment对象 到 R.id.fragment_container 容器中.
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

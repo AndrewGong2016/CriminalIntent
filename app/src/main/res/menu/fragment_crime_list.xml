@@ -5,7 +5,7 @@
         android:id="@+id/new_crime"
         android:icon="@drawable/ic_mune_add"
         android:title="@string/new_crime"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom|withText" />
 
     <item
         android:id="@+id/show_subtitle"

@@ -1,5 +1,6 @@
 package com.example.administrator.criminalintent;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -24,6 +25,21 @@ import java.util.List;
 public class CrimeListFragment extends Fragment {
     private CrimeAdapter mCrimeAdapter;
     private RecyclerView mCrimeRecycleView;
+
+    private Callbacks mCallbacks;
+    /**
+     * Required interface for hosting activities
+     */
+    public interface Callbacks {
+        void onCrimeSelected(Crime crime);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mCallbacks= (Callbacks) context;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -43,16 +59,18 @@ public class CrimeListFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case R.id.new_crime:
                 Crime crime = new Crime();
                 CrimeLab.get(getActivity()).addCrime(crime);
-                Intent intent = CrimePagerActivity
-                        .newIntent(getActivity(), crime.getId());
-                startActivity(intent);
+//                Intent intent = CrimePagerActivity
+//                        .newIntent(getActivity(), crime.getId());
+//                startActivity(intent);
+                updateUI();
+                mCallbacks.onCrimeSelected(crime);
+
             case R.id.show_subtitle:
                 updateSubtitle();
                 return true;
@@ -88,8 +106,11 @@ public class CrimeListFragment extends Fragment {
             mCrimeAdapter = new CrimeAdapter(crimes);
             mCrimeRecycleView.setAdapter(mCrimeAdapter);
         } else {
+            mCrimeAdapter.setCrimes(crimes);
             mCrimeAdapter.notifyDataSetChanged();
         }
+
+        updateSubtitle();
 
     }
 
@@ -130,12 +151,25 @@ public class CrimeListFragment extends Fragment {
         //每一个Viewholder都可以被点击
         @Override
         public void onClick(View v) {
-            Toast.makeText(getActivity(),"id == "+mCrime.getTitle()+" clicked",Toast.LENGTH_SHORT).show();
-//            Intent intent =  CrimeActivity.newIntent(getActivity(),mCrime.getId());
-            Intent intent = CrimePagerActivity.newIntent(getActivity(),mCrime.getId());
-            startActivity(intent);
+            /**
+             * 在这里处理每一项HoldView被点击之后的触发逻辑
+             * 为保持 Fragment 构件的独立性，通过 Intent 来执行点击逻辑：
+             * 1 ，在手机平台，跳转至CrimePagerActivity 去，只是与跳转的Activity强关联，与自生所依托的Activity并无关联/耦合；
+             * 2，在平板平台，【未完待处理】。？疑问：平板平台上不适合另起一个Activity，而在手机平台很有必要，代码逻辑上该如何权衡？？
+             */
+//            Toast.makeText(getActivity(),"id == "+mCrime.getTitle()+" clicked",Toast.LENGTH_SHORT).show();
+////            Intent intent =  CrimeActivity.newIntent(getActivity(),mCrime.getId());
+//            Intent intent = CrimePagerActivity.newIntent(getActivity(),mCrime.getId());
+//            startActivity(intent);
+            mCallbacks.onCrimeSelected(mCrime);
 
         }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
     }
 
     /*
@@ -171,6 +205,11 @@ public class CrimeListFragment extends Fragment {
             if(crime != null){
                 crimeHolder.bind(crime);
             }
+        }
+
+
+        public void setCrimes(List<Crime> crimes) {
+            mCrimes = crimes;
         }
         @Override
         public int getItemCount() {

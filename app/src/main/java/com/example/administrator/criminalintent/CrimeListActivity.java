@@ -1,8 +1,9 @@
 package com.example.administrator.criminalintent;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 
-public class CrimeListActivity extends SingleFragmentacActivity{
+public class CrimeListActivity extends SingleFragmentacActivity implements CrimeListFragment.Callbacks {
 
     @Override
     protected Fragment createFragment() {
@@ -15,7 +16,19 @@ public class CrimeListActivity extends SingleFragmentacActivity{
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.activity_twopane;
+        return R.layout.activity_masterdetail;
     }
 
+    @Override
+    public void onCrimeSelected(Crime crime) {
+        if (findViewById(R.id.detail_fragment_container) == null) {
+            Intent intent = CrimePagerActivity.newIntent(this, crime.getId());
+            startActivity(intent);
+        } else {
+            Fragment newDetail = CrimeFragment.newInstance(crime.getId());
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.detail_fragment_container, newDetail)
+                    .commit();
+        }
+    }
 }

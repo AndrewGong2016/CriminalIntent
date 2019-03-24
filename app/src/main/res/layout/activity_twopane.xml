@@ -16,8 +16,9 @@
 
     </FrameLayout>
 
+    <!--此Fragment布局为平板专用的，但代码部分是公共的呀，平板和手机如何分别运行呢？-->
     <FrameLayout
-        android:id="@+id/detail_fragment"
+        android:id="@+id/detail_fragment_container"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="3">
