@@ -9,14 +9,9 @@
 
     <item
         android:id="@+id/show_subtitle"
-        android:icon="@drawable/ic_mune_show_count"
         android:title="@string/show_subtitle"
         app:showAsAction="ifRoom"/>
-    <item
-        android:id="@+id/show_subtitle2"
-        android:icon="@drawable/ic_mune_search"
-        android:title="@string/show_subtitle"
-        app:showAsAction="ifRoom"/>
+
     <!--
     <item
         android:id="@+id/search_crime"
